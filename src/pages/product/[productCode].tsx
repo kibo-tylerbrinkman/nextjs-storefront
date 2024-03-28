@@ -64,6 +64,14 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   return { paths, fallback: true }
 }
 
+const handleClick = async () => {
+  const products = await fetch('/api/getProducts')
+
+  const productData = await products.json()
+
+  console.log({ productData })
+}
+
 const ProductDetailPage: NextPage<ProductPageType> = (props) => {
   const { product } = props
   const router = useRouter()
@@ -75,6 +83,8 @@ const ProductDetailPage: NextPage<ProductPageType> = (props) => {
   const breadcrumbs = product ? productGetters.getBreadcrumbs(product) : []
   return (
     <>
+      <div style={{ padding: '20px' }}></div>
+      <button onClick={handleClick}>REST API DEMO</button>
       <ProductDetailTemplate product={product as ProductCustom} breadcrumbs={breadcrumbs} />
     </>
   )
