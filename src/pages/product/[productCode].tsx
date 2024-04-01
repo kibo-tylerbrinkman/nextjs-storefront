@@ -2,7 +2,7 @@ import getConfig from 'next/config'
 import { useRouter } from 'next/router'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
-import RESTProductDemo from '../RESTProductDemo'
+import RESTProductDemo from '../../../components/product/RESTProductDemo'
 import { ProductDetailTemplate, ProductDetailSkeleton } from '@/components/page-templates'
 import { getProduct, getCategoryTree, productSearch } from '@/lib/api/operations'
 import { productGetters } from '@/lib/getters'

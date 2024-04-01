@@ -11,13 +11,10 @@ const RESTProductDemo = () => {
       setProducts(productData.items)
     }
     getProductData()
-  }, [products])
+  }, [])
 
   return (
-    <>
-      {products.length &&
-        products.map((p: any) => <li key={p.productCode}>{p.content?.productName}</li>)}
-    </>
+    <>{products.length && products.map((p: any) => <li key={p.productCode}>{p.productCode}</li>)}</>
   )
 }
 export default RESTProductDemo
