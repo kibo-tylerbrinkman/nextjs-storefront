@@ -67,17 +67,56 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   return { paths, fallback: true }
 }
 
+function parseCategoryTreeForCategoryCode(urlParams: string[], tree: any) {
+  //end of params, what about too many, too few
+  try {
+    let categoryCode = ''
+    let currentNode = tree
+
+    for (let i = 0; i < urlParams.length; i++) {
+      const currentQuery = urlParams[i]
+      const hasNode = currentNode.find((n: any) => n.content.slug == currentQuery)
+
+      if (hasNode && hasNode.childrenCategories && hasNode.childrenCategories.length != 0) {
+        currentNode = hasNode.childrenCategories
+      }
+    }
+
+    if (
+      currentNode &&
+      currentNode.length > 0 &&
+      currentNode[0].content.slug == urlParams[urlParams.length - 1]
+    ) {
+      categoryCode = currentNode[0].categoryCode
+    }
+
+    return categoryCode
+  } catch (e) {
+    console.log(`ERROR 'parseCategoryTreeForNode'. ${e}`)
+    return ''
+  }
+}
+
 export async function getStaticProps(
   context: GetStaticPropsContext
 ): Promise<GetStaticPropsResult<CategoryPageType>> {
   const { locale, params } = context
   const { publicRuntimeConfig } = getConfig()
-  const { categoryCode } = params as { categoryCode: string }
+
   const categoriesTree = await getCategoryTree()
+
+  const categoryUrlParams: string[] = params?.categoryCode ? (params.categoryCode as string[]) : []
+  const categoryCode = parseCategoryTreeForCategoryCode(categoryUrlParams, categoriesTree)
+
+  if (params) {
+    params.categoryCode = categoryCode
+  }
+
   const category = await categoryTreeSearchByCode({ categoryCode }, categoriesTree)
   if (!category) {
     return { notFound: true }
   }
+
   const pageSize = publicRuntimeConfig.productListing.pageSize
   const response = await productSearch({
     pageSize,
@@ -102,13 +141,15 @@ const CategoryPage: NextPage<CategoryPageType> = (props) => {
   const { publicRuntimeConfig } = getConfig()
   const code = props.categoryCode
   const [searchParams, setSearchParams] = useState<CategorySearchParams>({
-    categoryCode: props.categoryCode,
+    categoryCode: code,
   } as unknown as CategorySearchParams)
 
   useEffect(() => {
+    const query = router.query.categoryCode ? (router.query.categoryCode as string[]) : []
+    const categoryCode = parseCategoryTreeForCategoryCode(query, props.categoriesTree)
+
     setSearchParams({
       categoryCode: code,
-      ...router.query,
     } as unknown as CategorySearchParams)
   }, [router.query, code])
 
