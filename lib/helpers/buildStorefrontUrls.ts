@@ -1,8 +1,8 @@
 import { PrCategory, Product } from '../gql/types'
 
 type BuildPathOptions = {
-  absolute: boolean
-  originUrl: string
+  absolute?: boolean
+  originUrl?: string
 }
 function joinPathParts(parts: string[]) {
   return parts.join('/').replace(/\/+/g, '/')
@@ -13,6 +13,7 @@ function getPathStart(options?: BuildPathOptions) {
   if (absolute) {
     originUrl = originUrl || process.env.NEXT_PUBLIC_URL
   }
+
   return originUrl || ''
 }
 const pdpRoutePath = 'product'
@@ -35,22 +36,49 @@ export function buildProductPathByCode(productCode: string, options?: BuildPathO
 }
 
 const categoryRoutePath = 'category'
-export function buildCategoryPath(category: PrCategory, options?: BuildPathOptions) {
-  const { categoryCode, content } = category
-  const pathInput: string[] = []
-  pathInput.push(getPathStart(options))
-  pathInput.push(categoryRoutePath)
-  /* add category content slugs here  */
-  pathInput.push(categoryCode as string)
-  return joinPathParts(pathInput)
+export function buildCategoryPath(
+  category: PrCategory,
+  options?: BuildPathOptions,
+  categoryTree?: any
+) {
+  if (categoryTree) {
+    const { categoryCode, content } = category
+    const pathInput: string[] = []
+    pathInput.push(getPathStart(options))
+    pathInput.push(categoryRoutePath)
+    /* add category content slugs here  */
+    pathInput.push(categoryCode as string)
+    return joinPathParts(pathInput)
+  } else {
+    const { categoryCode, content } = category
+    const pathInput: string[] = []
+    pathInput.push(getPathStart(options))
+    pathInput.push(categoryRoutePath)
+    /* add category content slugs here  */
+    pathInput.push(categoryCode as string)
+    return joinPathParts(pathInput)
+  }
 }
-export function buildCategoryPathByCode(categoryCode: string, options?: BuildPathOptions) {
-  const pathInput: string[] = []
-  pathInput.push(getPathStart(options))
-  pathInput.push(categoryRoutePath)
-  /* add category content slugs here  */
-  pathInput.push(categoryCode as string)
-  return joinPathParts(pathInput)
+export function buildCategoryPathByCode(
+  categoryCode: string,
+  options?: BuildPathOptions,
+  categoryTree?: any
+) {
+  if (categoryTree) {
+    const pathInput: string[] = []
+    pathInput.push(getPathStart(options))
+    pathInput.push(categoryRoutePath)
+    /* add category content slugs here  */
+    pathInput.push(categoryCode as string)
+    return joinPathParts(pathInput)
+  } else {
+    const pathInput: string[] = []
+    pathInput.push(getPathStart(options))
+    pathInput.push(categoryRoutePath)
+    /* add category content slugs here  */
+    pathInput.push(categoryCode as string)
+    return joinPathParts(pathInput)
+  }
 }
 
 export const CATEGORY_TREE_ENDPOINT = `${
