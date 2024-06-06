@@ -1,3 +1,4 @@
+import { FlatMapCategoryTree } from './uiHelpers'
 import { PrCategory, Product } from '../gql/types'
 
 type BuildPathOptions = {
@@ -39,15 +40,16 @@ const categoryRoutePath = 'category'
 export function buildCategoryPath(
   category: PrCategory,
   options?: BuildPathOptions,
-  categoryTree?: any
+  categoryMap?: FlatMapCategoryTree
 ) {
-  if (categoryTree) {
+  if (categoryMap) {
     const { categoryCode, content } = category
     const pathInput: string[] = []
     pathInput.push(getPathStart(options))
     pathInput.push(categoryRoutePath)
     /* add category content slugs here  */
-    pathInput.push(categoryCode as string)
+    //pathInput.push(categoryCode as string)
+    pathInput.push(categoryMap[categoryCode as string] as string)
     return joinPathParts(pathInput)
   } else {
     const { categoryCode, content } = category
@@ -62,14 +64,16 @@ export function buildCategoryPath(
 export function buildCategoryPathByCode(
   categoryCode: string,
   options?: BuildPathOptions,
-  categoryTree?: any
+  categoryMap?: FlatMapCategoryTree
 ) {
-  if (categoryTree) {
+  if (categoryMap) {
     const pathInput: string[] = []
     pathInput.push(getPathStart(options))
     pathInput.push(categoryRoutePath)
     /* add category content slugs here  */
-    pathInput.push(categoryCode as string)
+    // pathInput.push(categoryCode as string)
+    pathInput.push(categoryMap[categoryCode as string] as string)
+
     return joinPathParts(pathInput)
   } else {
     const pathInput: string[] = []

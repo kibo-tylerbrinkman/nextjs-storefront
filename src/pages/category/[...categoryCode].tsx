@@ -10,6 +10,7 @@ import { useGetSearchedProducts } from '@/hooks'
 import { getCategoryTree, productSearch } from '@/lib/api/operations'
 import { productSearchGetters, facetGetters } from '@/lib/getters'
 import { categoryTreeSearchByCode, buildCategoryPath } from '@/lib/helpers'
+import { uiHelpers } from '@/lib/helpers'
 import type { CategorySearchParams, MetaData, PageWithMetaData } from '@/lib/types'
 
 import type {
@@ -45,9 +46,14 @@ function getMetaData(category: PrCategory): MetaData {
 }
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
   const categoriesTree = (await getCategoryTree()) || []
+
+  const { flattenCategoryTree } = uiHelpers()
+
+  const categoryFlatMap = flattenCategoryTree(categoriesTree)
+
   const getCategoryPaths = (category: Maybe<PrCategory>, categoryPaths: any[] = []) => {
     if (category?.isDisplayed) {
-      categoryPaths.push(buildCategoryPath(category))
+      categoryPaths.push(buildCategoryPath(category, {}, categoryFlatMap))
     }
     const { childrenCategories = [] } = category as PrCategory
     if (childrenCategories) {
