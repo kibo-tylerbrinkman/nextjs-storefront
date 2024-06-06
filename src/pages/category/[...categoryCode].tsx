@@ -77,6 +77,10 @@ function parseCategoryTreeForCategoryCode(urlParams: string[], tree: any) {
       const currentQuery = urlParams[i]
       const hasNode = currentNode.find((n: any) => n.content.slug == currentQuery)
 
+      if (hasNode.content && hasNode.content.slug == currentQuery) {
+        break
+      }
+
       if (hasNode && hasNode.childrenCategories && hasNode.childrenCategories.length != 0) {
         currentNode = hasNode.childrenCategories
       }
