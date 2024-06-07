@@ -48,7 +48,6 @@ export function buildCategoryPath(
     pathInput.push(getPathStart(options))
     pathInput.push(categoryRoutePath)
     /* add category content slugs here  */
-    //pathInput.push(categoryCode as string)
     pathInput.push(categoryMap[categoryCode as string] as string)
     return joinPathParts(pathInput)
   } else {

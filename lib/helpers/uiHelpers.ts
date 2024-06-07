@@ -19,7 +19,7 @@ export const uiHelpers = (): UIHelpersType => {
     categoryCode?: string,
     seoFriendlyUrl?: string,
     categoryMap?: any
-  ): string => buildCategoryPathByCode(categoryCode as string)
+  ): string => buildCategoryPathByCode(categoryCode as string, {}, categoryMap)
   const getProductLink = (productCode?: string, seoFriendlyUrl?: string) =>
     buildProductPathByCode(productCode as string)
 

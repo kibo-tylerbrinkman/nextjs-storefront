@@ -74,7 +74,6 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 }
 
 function parseCategoryTreeForCategoryCode(urlParams: string[], tree: any) {
-  //end of params, what about too many, too few
   try {
     let categoryCode = ''
     let currentNode = tree
@@ -83,17 +82,25 @@ function parseCategoryTreeForCategoryCode(urlParams: string[], tree: any) {
       const currentQuery = urlParams[i]
       const hasNode = currentNode.find((n: any) => n.content.slug == currentQuery)
 
-      if (hasNode && hasNode.childrenCategories && hasNode.childrenCategories.length != 0) {
+      if (
+        hasNode &&
+        hasNode.content &&
+        hasNode.content.slug == currentQuery &&
+        i == urlParams.length - 1
+      ) {
+        break
+      }
+
+      if (hasNode && hasNode.childrenCategories?.length != 0) {
         currentNode = hasNode.childrenCategories
       }
     }
 
-    if (
-      currentNode &&
-      currentNode.length > 0 &&
-      currentNode[0].content.slug == urlParams[urlParams.length - 1]
-    ) {
-      categoryCode = currentNode[0].categoryCode
+    if (currentNode && currentNode.length > 0) {
+      const category = currentNode.find(
+        (n: any) => n.content.slug == urlParams[urlParams.length - 1]
+      )
+      categoryCode = category ? category.categoryCode : ''
     }
 
     return categoryCode
@@ -152,7 +159,7 @@ const CategoryPage: NextPage<CategoryPageType> = (props) => {
 
   useEffect(() => {
     const query = router.query.categoryCode ? (router.query.categoryCode as string[]) : []
-    const categoryCode = parseCategoryTreeForCategoryCode(query, props.categoriesTree)
+    // const categoryCode = parseCategoryTreeForCategoryCode(query, props.categoriesTree)
 
     setSearchParams({
       categoryCode: code,

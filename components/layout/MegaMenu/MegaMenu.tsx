@@ -18,7 +18,7 @@ import { useTranslation } from 'next-i18next'
 
 import { KiboImage } from '@/components/common'
 import { MegaMenuItem } from '@/components/layout'
-import { uiHelpers } from '@/lib/helpers'
+import { FlatMapCategoryTree, uiHelpers } from '@/lib/helpers'
 import DefaultImage from '@/public/product_placeholder.svg'
 
 import type { Maybe, PrCategory } from '@/lib/gql/types'
@@ -31,6 +31,7 @@ interface MegaMenuProps {
 interface MegaMenuCategoryProps {
   category: Maybe<PrCategory>
   activeCategory: string
+  categoryFlatMap: FlatMapCategoryTree
   onBackdropToggle: (isOpen: boolean) => void
   setActiveCategory: (activeCategory: string) => void
 }
@@ -89,7 +90,7 @@ const StyledLink = styled(Link)(({ theme }: { theme: Theme }) => ({
 }))
 
 const MegaMenuCategory = (props: MegaMenuCategoryProps) => {
-  const { category, activeCategory, onBackdropToggle, setActiveCategory } = props
+  const { category, activeCategory, categoryFlatMap, onBackdropToggle, setActiveCategory } = props
   const childrenCategories = category?.childrenCategories as PrCategory[]
 
   const { t } = useTranslation('common')
@@ -118,7 +119,8 @@ const MegaMenuCategory = (props: MegaMenuCategoryProps) => {
         <StyledLink
           href={getCategoryLink(
             category?.categoryCode as string,
-            category?.content?.slug as string
+            category?.content?.slug as string,
+            categoryFlatMap
           )}
           passHref
           onClick={closeBackDrop}
@@ -150,6 +152,7 @@ const MegaMenuCategory = (props: MegaMenuCategoryProps) => {
                     categoryCode={cat?.categoryCode as string}
                     seoFriendlyUrl={cat?.content?.slug as string}
                     onBackDropClose={closeBackDrop}
+                    categoryFlatMap={categoryFlatMap}
                   />
                 )
               })}
@@ -180,6 +183,12 @@ const MegaMenu = (props: MegaMenuProps) => {
 
   const [activeCategory, setActiveCategory] = useState<string>('')
 
+  const { flattenCategoryTree } = uiHelpers()
+  const validCategories = categoryTree.filter(
+    (category): category is PrCategory => category !== null && category !== undefined
+  )
+  const categoryFlatMap = flattenCategoryTree(validCategories)
+
   return (
     <StyledToolbar data-testid="megamenu-container">
       <Container maxWidth="xl">
@@ -201,6 +210,7 @@ const MegaMenu = (props: MegaMenuProps) => {
               onBackdropToggle={onBackdropToggle}
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
+              categoryFlatMap={categoryFlatMap}
             />
           ))}
         </Tabs>

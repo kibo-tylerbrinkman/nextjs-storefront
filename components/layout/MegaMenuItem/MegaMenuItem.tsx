@@ -4,7 +4,7 @@ import { List, ListItem, ListItemText, Stack, Theme, styled } from '@mui/materia
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
 
-import { uiHelpers } from '@/lib/helpers'
+import { FlatMapCategoryTree, uiHelpers } from '@/lib/helpers'
 
 import type { PrCategory, Maybe } from '@/lib/gql/types'
 
@@ -13,6 +13,7 @@ interface MegaMenuItemProps {
   categoryChildren: Maybe<PrCategory>[]
   categoryCode: string
   seoFriendlyUrl: string
+  categoryFlatMap: FlatMapCategoryTree
   onBackDropClose: () => void
 }
 
@@ -22,10 +23,18 @@ const StyledLink = styled(Link)(({ theme }: { theme: Theme }) => ({
 }))
 
 const MegaMenuItem = (props: MegaMenuItemProps) => {
-  const { title, categoryChildren, categoryCode, seoFriendlyUrl, onBackDropClose } = props
+  const {
+    title,
+    categoryChildren,
+    categoryCode,
+    seoFriendlyUrl,
+    onBackDropClose,
+    categoryFlatMap,
+  } = props
   const { t } = useTranslation('common')
 
   const { getCategoryLink } = uiHelpers()
+
   return (
     <Stack alignItems={'flex-start'}>
       <List dense>
@@ -36,14 +45,21 @@ const MegaMenuItem = (props: MegaMenuItemProps) => {
           />
         </ListItem>
         <ListItem sx={{ cursor: 'pointer' }} onClick={onBackDropClose}>
-          <StyledLink href={getCategoryLink(categoryCode, seoFriendlyUrl)} passHref>
+          <StyledLink
+            href={getCategoryLink(categoryCode, seoFriendlyUrl, categoryFlatMap)}
+            passHref
+          >
             {t('shop-all')}
           </StyledLink>
         </ListItem>
         {categoryChildren?.map((cat) => (
           <ListItem key={cat?.categoryId} role="group" onClick={onBackDropClose}>
             <StyledLink
-              href={getCategoryLink(cat?.categoryCode as string, cat?.content?.slug as string)}
+              href={getCategoryLink(
+                cat?.categoryCode as string,
+                cat?.content?.slug as string,
+                categoryFlatMap
+              )}
               passHref
               data-testid="categoryLink"
             >
