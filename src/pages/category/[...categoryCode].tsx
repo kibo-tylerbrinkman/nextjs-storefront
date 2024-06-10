@@ -158,12 +158,14 @@ const CategoryPage: NextPage<CategoryPageType> = (props) => {
   } as unknown as CategorySearchParams)
 
   useEffect(() => {
-    const query = router.query.categoryCode ? (router.query.categoryCode as string[]) : []
-    // const categoryCode = parseCategoryTreeForCategoryCode(query, props.categoriesTree)
-
-    setSearchParams({
+    const newSearchParams = {
       categoryCode: code,
-    } as unknown as CategorySearchParams)
+      ...router.query,
+    }
+    //`code` can be replaced by the `categoryCode` in `router.query` we need to make sure it is set correctly
+    newSearchParams.categoryCode = code
+
+    setSearchParams(newSearchParams as unknown as CategorySearchParams)
   }, [router.query, code])
 
   const {
